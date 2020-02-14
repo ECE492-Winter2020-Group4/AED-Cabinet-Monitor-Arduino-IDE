@@ -15,7 +15,7 @@ void WakeupHandler::handle()
     switch(esp_sleep_get_wakeup_cause())
     {
         case ESP_SLEEP_WAKEUP_EXT0 : 
-            Serial.println("ISR Wakeup"); 
+            Serial.println("ISR0 Wakeup"); 
             h_email.sendUnexpectedOpening();
             break;
         case ESP_SLEEP_WAKEUP_TIMER : 
@@ -24,7 +24,7 @@ void WakeupHandler::handle()
             break;
         default : 
             // Only at boot up, Do Nothing
-            Serial.println("Other Wakeup");
+            Serial.printf("Other Wakeup: %d\n", esp_sleep_get_wakeup_cause());
             break;
     }
 }

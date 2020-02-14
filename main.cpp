@@ -42,4 +42,5 @@ void loop()
     }
     Serial.printf("Entering Deep Sleep for %d\n", DEEP_SLEEP_FOR_X_SECONDS);
     esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
+    // esp_deep_sleep_start();
 }
