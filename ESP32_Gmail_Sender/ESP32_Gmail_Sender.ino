@@ -1,8 +1,3 @@
-/* Arduino core for ESP32 WiFi chip SMTP Gmail sender
-   by jubaid hossain
-   4.9.2018
-   you can copy and paste full code
-*/
 #include <WiFi.h>
 #include "Gsender_32.h"
 #include <WiFiClientSecure.h>
