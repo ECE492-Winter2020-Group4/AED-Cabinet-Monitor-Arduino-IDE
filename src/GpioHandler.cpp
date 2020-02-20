@@ -2,24 +2,38 @@
 #include "../include/GpioHandler.hpp"
 #include "../include/defs.hpp"
 
+#include <driver/gpio.h>
+#include <driver/rtc_io.h>
+
 bool ledStatus = false;
 extern int enterSleepInSec;
+
+void wakeUpBlink();
 
 GpioHandler::GpioHandler()
 {
     Serial.println("Creating GpioHandler");
-    pinMode(GPIO_LED, OUTPUT);
-    pinMode(GPIO_DETECTOR, INPUT_PULLDOWN);
-    attachInterrupt(GPIO_DETECTOR, isr, RISING); // On Button Release
+    wakeUpBlink();
+    pinMode(GPIO_DETECTOR, INPUT_PULLUP);
+    attachInterrupt(GPIO_DETECTOR, isr, CHANGE); 
     
     digitalWrite(GPIO_LED, HIGH);   
-    gpio_pullup_en(gpio_num_t(GPIO_DETECTOR));
-    gpio_pulldown_dis(gpio_num_t(GPIO_DETECTOR));
-    esp_sleep_enable_ext0_wakeup(gpio_num_t(GPIO_DETECTOR), ESP_EXT1_WAKEUP_ANY_HIGH);
-    
+    esp_sleep_enable_ext0_wakeup(gpio_num_t(GPIO_DETECTOR), 1);
 }
 
 void GpioHandler::isr() {
-    digitalWrite(GPIO_LED, ledStatus = !ledStatus);   
+    // Turn on/off blue LED
+    digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR)));
     enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
+}
+
+void wakeUpBlink()
+{
+    for(int i = 0; i < 3 ; i++)
+    {
+        pinMode(GPIO_LED, INPUT);
+        vTaskDelay(100);
+        pinMode(GPIO_LED, OUTPUT);
+        vTaskDelay(100);
+    }
 }
