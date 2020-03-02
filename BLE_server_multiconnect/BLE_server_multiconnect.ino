@@ -50,7 +50,7 @@ void setup() {
   Serial.begin(115200);
 
   // Create the BLE Device
-  BLEDevice::init("ESP32-AED-Monitor-ID");
+  BLEDevice::init("AED-ESP32-Monitor-1");
 
   // Create the BLE Server
   pServer = BLEDevice::createServer();
