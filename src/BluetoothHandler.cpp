@@ -4,6 +4,9 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 
+#include "../include/defs.hpp"
+
+
 BLEServer* pServer;
 BLECharacteristic* pCharacteristic;
 bool deviceConnected;
