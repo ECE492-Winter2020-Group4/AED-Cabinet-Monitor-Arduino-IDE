@@ -12,6 +12,7 @@ inorder for the compiler to pull all other files in.
 #include "include/GpioHandler.hpp"
 #include "include/WakeupHandler.hpp"
 #include "include/WifiHandler.hpp"
+#include "include/BluetoothHandler.hpp"
 
 #include "esp32-hal-cpu.h"
 #include "esp_pm.h"
@@ -22,9 +23,11 @@ inorder for the compiler to pull all other files in.
 
 WifiHandler h_wifi;
 GpioHandler h_gpio;
-WakeupHandler h_wakeup; 
+WakeupHandler h_wakeup;
+BluetoothHandler h_bluetooth;
 
 int enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
+bool bluetoothTestFlag = true;
 
 gpio_num_t disabledGPIO[] = {
     GPIO_NUM_0,
@@ -60,8 +63,7 @@ gpio_num_t disabledGPIO[] = {
     GPIO_NUM_36,
     GPIO_NUM_37,
     GPIO_NUM_38,
-    GPIO_NUM_39
-};
+    GPIO_NUM_39};
 
 void setup()
 {
@@ -76,16 +78,16 @@ void powerOptimization()
 {
     setCpuFrequencyMhz(80); // Minimum possible for Wifi, and BT
 
-    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM,ESP_PD_OPTION_OFF);
-    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM,ESP_PD_OPTION_OFF);
-    esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL,ESP_PD_OPTION_OFF);
-    esp_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_OFF);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL, ESP_PD_OPTION_OFF);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_MAX, ESP_PD_OPTION_OFF);
 
     esp_deep_sleep_disable_rom_logging();
 
     rtc_gpio_force_hold_dis_all();
 
-    for(gpio_num_t i : disabledGPIO)
+    for (gpio_num_t i : disabledGPIO)
     {
         rtc_gpio_isolate(i);
         gpio_pulldown_dis(i);
@@ -97,14 +99,21 @@ void loop()
 {
     // Will not actually loop due to how deep-sleep works.
     // Treat this as main()
-
-    h_wakeup.handle();
-    while(enterSleepInSec-- > 0)
+    if (bluetoothTestFlag)
     {
-        digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
-        vTaskDelay(1000);
-        Serial.printf("Entering Sleep in %d\n", enterSleepInSec);
+        h_bluetooth = BluetoothHandler();
+        h_bluetooth.run();
     }
-    Serial.printf("Entering Deep Sleep for %d\n", DEEP_SLEEP_FOR_X_SECONDS);
-    esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
+    else
+    {
+        h_wakeup.handle();
+        while (enterSleepInSec-- > 0)
+        {
+            digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
+            vTaskDelay(1000);
+            Serial.printf("Entering Sleep in %d\n", enterSleepInSec);
+        }
+        Serial.printf("Entering Deep Sleep for %d\n", DEEP_SLEEP_FOR_X_SECONDS);
+        esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
+    }
 }

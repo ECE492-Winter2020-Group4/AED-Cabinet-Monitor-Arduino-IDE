@@ -6,9 +6,8 @@
 
 #include "../include/defs.hpp"
 
-
-BLEServer* pServer;
-BLECharacteristic* pCharacteristic;
+BLEServer *pServer;
+BLECharacteristic *pCharacteristic;
 bool deviceConnected;
 bool oldDeviceConnected;
 uint32_t value;
@@ -94,14 +93,16 @@ BluetoothHandler::BluetoothHandler()
 
 void BluetoothHandler::run()
 {
-    if (!deviceConnected && oldDeviceConnected) {
-        delay(500); // give the bluetooth stack the chance to get things ready
+    if (!deviceConnected && oldDeviceConnected)
+    {
+        delay(500);                  // give the bluetooth stack the chance to get things ready
         pServer->startAdvertising(); // restart advertising
         Serial.println("start advertising");
         oldDeviceConnected = deviceConnected;
     }
     // connecting
-    if (deviceConnected && !oldDeviceConnected) {
+    if (deviceConnected && !oldDeviceConnected)
+    {
         oldDeviceConnected = deviceConnected;
     }
 }
