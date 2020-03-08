@@ -1,7 +1,3 @@
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#include "esp_wpa2.h"
-#include "Gsender_32.h"
 #include "WifiHandler.hpp"
 #include "EmailHandler.hpp"
 #include "defs.hpp"

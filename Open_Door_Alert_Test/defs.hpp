@@ -3,12 +3,12 @@
 #define GPIO_LED 5
 enum DoorStatus
 {
-    DOOR_OPEN = 0,
-    DOOR_CLOSE = 1
+    DOOR_CLOSE = 0,
+    DOOR_OPEN = 1
 };
 
-#define DEEP_SLEEP_FOR_X_SECONDS 30
-#define STAY_AWAKE_FOR_X_SECONDS 30
+#define DEEP_SLEEP_FOR_X_SECONDS 60
+#define STAY_AWAKE_FOR_X_SECONDS 15
 
 #define WIFI_SSID "******"     // wifi ssid
 #define WIFI_PASSWORD "******" // wifi password for home wifi only
