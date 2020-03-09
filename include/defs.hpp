@@ -19,10 +19,9 @@ enum WifiType
 };
 #define WIFI_TYPE ENTERPRISE_WIFI // select between enterprise and home
 
-#define SENDER_GMAIL_ADDRESS "uaececapstone@gmail.com"               // sender's gmail address
-#define SENDER_GMAIL_BASE64_LOGIN "dWFlY2VjYXBzdG9uZUBnbWFpbC5jb20=" // sender's gmail address encoded
-#define SENDER_GMAIL_BASE64_PASSWORD "******"                        // sender's gmail password encoded
-#define RECEIVER_EMAIL_ADDRESS "******"                              // receiver's gmail address
+#define SENDER_GMAIL_ADDRESS "uaececapstone@gmail.com" // sender's gmail address
+#define SENDER_GMAIL_PASSWORD "******"                 // sender's gmail address
+#define RECEIVER_EMAIL_ADDRESS "******"                // receiver's gmail address
 
-#define MODULE 1
-#define LOCATION "UAlberta Campus"
+#define MODULE "1"                 // default module
+#define LOCATION "UAlberta Campus" // default location
