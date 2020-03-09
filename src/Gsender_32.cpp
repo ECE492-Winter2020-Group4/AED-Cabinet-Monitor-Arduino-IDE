@@ -54,6 +54,7 @@ const char *Gsender::getError()
 bool Gsender::Send(const String &to, const String &message)
 {
   WiFiClientSecure client;
+  setupGmailCredential();
 
 #if defined(GS_SERIAL_LOG_2)
   Serial.print("Connecting to :");
@@ -71,9 +72,9 @@ bool Gsender::Send(const String &to, const String &message)
   }
 
 #if defined(GS_SERIAL_LOG_2)
-  Serial.println("HELO friend:");
+  Serial.println("HELLO friend:");
 #endif
-  client.println("HELO friend");
+  client.println("HELLO friend");
   if (!AwaitSMTPResponse(client, "250"))
   {
     _error = "identification error";
@@ -156,6 +157,8 @@ bool Gsender::Send(const String &to, const String &message)
 bool Gsender::Send(int num, const String to[], const String &message)
 {
   WiFiClientSecure client;
+  setupGmailCredential();
+
 #if defined(GS_SERIAL_LOG_2)
   Serial.print("Connecting to :");
   Serial.println(SMTP_SERVER);
@@ -264,4 +267,16 @@ bool Gsender::Send(int num, const String to[], const String &message)
   }
 
   return true;
+}
+
+void Gsender::setupGmailCredential()
+{
+  EMAILBASE64_LOGIN = encodeBase64(SENDER_GMAIL_ADDRESS);
+  EMAILBASE64_PASSWORD = encodeBase64(SENDER_GMAIL_PASSWORD);
+  Serial.println("Email Base64: " + EMAILBASE64_LOGIN);
+}
+
+String Gsender::encodeBase64(String toEncode)
+{
+  return base64::encode(toEncode);
 }
