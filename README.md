@@ -1,10 +1,11 @@
-To install please install the 'Arduino' module for VS Code. 
-Hit 'f1', and selected 'board config', and choose 'esp32 sparkfun thing'
-Hit 'f1', and select 'select serial port', and choose the correct option
-Hit 'f1', and select 'upload', and hopefully it should work
+## How to run program:
+Please ensure the 'Arduino' module is installed for VS Code. 
+1. Hit 'f1', and selected 'board config', and choose 'esp32 sparkfun thing'
+2. Hit 'f1', and select 'select serial port', and choose the correct option
+3. Hit 'f1', and select 'upload', and hopefully it should work
 
 
-##Please modify the following parameters at defs.hpp before running the program.
+## Please modify the following parameters at defs.hpp before running the program.
 
 For UWS:
 1. WIFI_SSID: UWS
