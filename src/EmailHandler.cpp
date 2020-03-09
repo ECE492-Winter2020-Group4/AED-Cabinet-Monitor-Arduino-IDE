@@ -3,9 +3,12 @@
 Gsender *EmailHandler::gsender = Gsender::Instance();
 String receiver_address[] = {RECEIVER_EMAIL_ADDRESS};
 //{"jiayun@ualberta.ca", "kebbi@ualberta.ca", "dn2@ualberta.ca", "jicheng@ualberta.ca"};
+String automated_msg = "This is an automated message. Please do not reply.";
 
 // not used
-EmailHandler::EmailHandler() {}
+EmailHandler::EmailHandler()
+{
+}
 
 EmailHandler::EmailHandler(WifiHandler *wifiHandler)
 {
@@ -27,7 +30,7 @@ void EmailHandler::sendOpenDoorAlert()
 {
     Serial.println("Sending alert when AED door is open...");
     String subject = "AED cabinet - open door alert";
-    String content = "Sent from " + String(WIFI_SSID) + " via local ip: " + h_wifi->getLocalIPAdress();
+    String content = "Module: " + String(MODULE) + "<br>Location: " + String(LOCATION) + "<br><br>" + automated_msg;
     sendEmail(subject, content);
 }
 
@@ -35,7 +38,7 @@ void EmailHandler::sendLowBatteryAlert()
 {
     Serial.println("Sending alert when battery power is low...");
     String subject = "AED cabinet - low battery power alert";
-    String content = "Sent from " + String(WIFI_SSID) + " via local ip: " + h_wifi->getLocalIPAdress();
+    String content = "Module: " + String(MODULE) + "<br>Location: " + String(LOCATION) + "<br><br>" + automated_msg;
     sendEmail(subject, content);
 }
 
