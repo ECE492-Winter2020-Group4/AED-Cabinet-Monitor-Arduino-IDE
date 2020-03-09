@@ -1,7 +1,10 @@
+#pragma once
+
 class WakeupHandler
 {
-    public:
-        WakeupHandler();
-        void handle();
-    private:
+public:
+    WakeupHandler();
+    void handle();
+
+private:
 };
