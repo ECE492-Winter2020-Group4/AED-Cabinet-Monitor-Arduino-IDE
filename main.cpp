@@ -97,6 +97,11 @@ void loop()
     h_wakeup.handle();
     while (enterSleepInSec-- > 0)
     {
+        if(digitalRead(gpio_num_t(GPIO_DETECTOR)) == 1)
+        {
+            // Open 
+            enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
+        }
         digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
         vTaskDelay(1000);
         Serial.printf("Entering Sleep in %d\n", enterSleepInSec);
