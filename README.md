@@ -9,17 +9,17 @@ Please ensure the 'Arduino' module is installed for VS Code.
 
 For UWS:
 1. WIFI_SSID: UWS
-2. EAP_IDENTITY: ualberta ccid
-3. EAP_PASSWORD: ualberta password
+2. EAP_IDENTITY: [ualberta ccid]
+3. EAP_PASSWORD: [ualberta password]
 4. WIFI_TYPE: ENTERPRISE_WIFI
-5. SENDER_GMAIL_ADDRESS: uaececapstone@gmail.com (sender gmail account)
-6. SENDER_GMAIL_PASSWORD: sender gmail account password
-7. RECEIVER_EMAIL_ADDRESS: receiver email account
+5. SENDER_GMAIL_ADDRESS: uaececapstone@gmail.com [sender gmail account]
+6. SENDER_GMAIL_PASSWORD: [sender gmail account password]
+7. RECEIVER_EMAIL_ADDRESS: [receiver email account]
 
-For Home wifi:
-1. WIFI_SSID: home wifi name
-2. WIFI_PASSWORD: home wifi password
+For home wifi:
+1. WIFI_SSID: [home wifi name]
+2. WIFI_PASSWORD: [home wifi password]
 3. WIFI_TYPE: HOME_WIFI
-4. SENDER_GMAIL_ADDRESS: uaececapstone@gmail.com (sender gmail account)
-5. SENDER_GMAIL_PASSWORD: sender gmail account password
-6. RECEIVER_EMAIL_ADDRESS: receiver email account
+4. SENDER_GMAIL_ADDRESS: uaececapstone@gmail.com [sender gmail account]
+5. SENDER_GMAIL_PASSWORD: [sender gmail account password]
+6. RECEIVER_EMAIL_ADDRESS: [receiver email account]
