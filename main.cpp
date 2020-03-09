@@ -101,6 +101,7 @@ void loop()
     // Treat this as main()
     if (bluetoothTestFlag)
     {
+        Serial.println("Creating bluetooth handler");
         h_bluetooth = BluetoothHandler();
         h_bluetooth.run();
     }

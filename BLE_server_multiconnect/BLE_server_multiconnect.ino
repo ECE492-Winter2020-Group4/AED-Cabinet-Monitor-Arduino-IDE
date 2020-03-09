@@ -10,8 +10,8 @@ bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
 
-#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
-#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define SERVICE_UUID        "0434f706-7af9-4349-8de8-701c14119b5a"
+#define CHARACTERISTIC_UUID "d1b6c2fe-b2d4-462d-9509-04d745b79d30"
 
 
 class MyServerCallbacks: public BLEServerCallbacks {
@@ -47,7 +47,7 @@ void setup() {
   Serial.begin(115200);
 
   // Create the BLE Device
-  BLEDevice::init("AED-ESP32-Monitor-1");
+  BLEDevice::init("AED-ESP32-Monitor-2");
 
   // Create the BLE Server
   pServer = BLEDevice::createServer();

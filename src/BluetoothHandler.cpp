@@ -3,8 +3,10 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
+#include <string.h>
 
 #include "../include/defs.hpp"
+#include "../include/BluetoothHandler.hpp"
 
 BLEServer *pServer;
 BLECharacteristic *pCharacteristic;
@@ -31,7 +33,7 @@ class FlutterAEDCallbacks : public BLECharacteristicCallbacks
     void onWrite(BLECharacteristic *pCharacteristic)
     {
         std::string value = pCharacteristic->getValue();
-
+        
         if (value.length() > 0)
         {
             Serial.println("*******");
