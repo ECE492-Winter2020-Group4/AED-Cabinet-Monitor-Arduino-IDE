@@ -97,15 +97,19 @@ void loop()
     h_wakeup.handle();
     while (enterSleepInSec-- > 0)
     {
-        if(digitalRead(gpio_num_t(GPIO_DETECTOR)) == 1)
+        if (digitalRead(gpio_num_t(GPIO_DETECTOR)) == 1)
         {
-            // Open 
+            // Open
             enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
+            Serial.printf("Staying awake\n");
+        }
+        else
+        {
+            Serial.printf("Entering Sleep in %d sec\n", enterSleepInSec);
         }
         digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
         vTaskDelay(1000);
-        Serial.printf("Entering Sleep in %d\n", enterSleepInSec);
     }
-    Serial.printf("Entering Deep Sleep for %d\n", DEEP_SLEEP_FOR_X_SECONDS);
+    Serial.printf("Entering Deep Sleep for %d sec\n", DEEP_SLEEP_FOR_X_SECONDS);
     esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
 }

@@ -273,7 +273,6 @@ void Gsender::setupGmailCredential()
 {
   EMAILBASE64_LOGIN = encodeBase64(SENDER_GMAIL_ADDRESS);
   EMAILBASE64_PASSWORD = encodeBase64(SENDER_GMAIL_PASSWORD);
-  Serial.println("Email Base64: " + EMAILBASE64_LOGIN);
 }
 
 String Gsender::encodeBase64(String toEncode)

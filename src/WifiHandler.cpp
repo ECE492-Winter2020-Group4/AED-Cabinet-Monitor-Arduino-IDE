@@ -15,7 +15,7 @@ void WifiHandler::initConnection()
     connection_state = wifiConnect();
     if (!connection_state) // if not connected to WIFI
     {
-        awaits(); // constantly trying to connect
+        reconnect(); // trying to connect again for # attempts
     }
 
     // Connection successful
@@ -93,13 +93,13 @@ uint8_t WifiHandler::wifiConnect()
 /**
  * Attempt to reconnect to wifi
  */
-void WifiHandler::awaits()
+void WifiHandler::reconnect()
 {
     uint8_t reconnect_attempt = 0;
     uint32_t ts = millis();
     while (!connection_state && reconnect_attempt < max_reconnect_attempts)
     {
-        delay(200); // delay 0.2 sec
+        delay(500); // wait for 0.5 sec
         if (millis() > (ts + reconnect_interval) && !connection_state)
         {
             Serial.print("Connection failed, reconnect attempt ");
