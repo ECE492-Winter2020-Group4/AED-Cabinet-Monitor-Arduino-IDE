@@ -21,7 +21,6 @@ inorder for the compiler to pull all other files in.
 #include <driver/rtc_io.h>
 #include <esp_wifi.h>
 
-WifiHandler h_wifi;
 GpioHandler h_gpio;
 WakeupHandler h_wakeup;
 BluetoothHandler h_bluetooth;
@@ -68,7 +67,6 @@ gpio_num_t disabledGPIO[] = {
 void setup()
 {
     Serial.begin(115200);
-    h_wifi = WifiHandler();
     h_gpio = GpioHandler();
     h_wakeup = WakeupHandler();
     powerOptimization();
