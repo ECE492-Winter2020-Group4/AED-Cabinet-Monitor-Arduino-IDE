@@ -18,6 +18,8 @@ public:
 
 private:
     WifiHandler *h_wifi;
-    uint8_t sent_state = 0; // sent email or not
+    uint8_t sent_state = 0;                                   // Sent email or not
+    uint16_t max_resend_attempts = MAX_EMAIL_RESEND_ATTEMPTS; // Max # of attempts for resending email
     void sendEmail(const String &subject, const String &content);
+    void resend(const String &subject, const String &content);
 };

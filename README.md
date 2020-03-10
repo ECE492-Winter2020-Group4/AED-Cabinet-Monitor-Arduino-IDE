@@ -1,12 +1,10 @@
-## How to run program:
+## How to run the program in VS Code:
 Please ensure the 'Arduino' module is installed for VS Code. 
 1. Hit 'f1', and selected 'board config', and choose 'esp32 sparkfun thing'
 2. Hit 'f1', and select 'select serial port', and choose the correct option
 3. Hit 'f1', and select 'upload', and hopefully it should work (* for Mac user, please press and hold the boot button when uploading)
 
-
 ## Please modify the following parameters at include/defs.hpp before running the program.
-
 For UWS:
 1. WIFI_SSID: UWS
 2. EAP_IDENTITY: [ualberta ccid]

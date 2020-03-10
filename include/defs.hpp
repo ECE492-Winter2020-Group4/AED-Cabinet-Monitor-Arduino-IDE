@@ -3,7 +3,9 @@
 #define GPIO_LED 5
 
 #define DEEP_SLEEP_FOR_X_SECONDS 60
-#define STAY_AWAKE_FOR_X_SECONDS 15
+#define STAY_AWAKE_FOR_X_SECONDS 10
+#define MAX_WIFI_RECONNECT_ATTEMPTS 4
+#define MAX_EMAIL_RESEND_ATTEMPTS 4
 
 #define WIFI_SSID "UWS"        // wifi ssid
 #define WIFI_PASSWORD "******" // wifi password for home wifi only
