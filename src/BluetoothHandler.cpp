@@ -15,11 +15,6 @@ bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
 
-#define SERVICE_UUID        "0434f706-7af9-4349-8de8-701c14119b5a"
-#define CHARACTERISTIC_UUID "d1b6c2fe-b2d4-462d-9509-04d745b79d30"
-
-
-
 class MyServerCallbacks : public BLEServerCallbacks
 {
     void onConnect(BLEServer *pServer)
@@ -62,8 +57,10 @@ class FlutterAEDCallbacks : public BLECharacteristicCallbacks
 BluetoothHandler::BluetoothHandler()
 {
     Serial.println("Creating BluetoothHandler");
+}
 
-    pServer = NULL;
+void BluetoothHandler::initServer(){
+        pServer = NULL;
     pCharacteristic = NULL;
     deviceConnected = false;
     oldDeviceConnected = false;
@@ -87,7 +84,6 @@ BluetoothHandler::BluetoothHandler()
             BLECharacteristic::PROPERTY_INDICATE);
 
     pCharacteristic->setCallbacks(new FlutterAEDCallbacks());
-    // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
     // Create a BLE Descriptor
     pCharacteristic->addDescriptor(new BLE2902());
 
