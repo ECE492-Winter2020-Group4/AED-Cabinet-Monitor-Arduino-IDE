@@ -13,6 +13,7 @@ inorder for the compiler to pull all other files in.
 #include "include/WakeupHandler.hpp"
 #include "include/WifiHandler.hpp"
 #include "include/BluetoothHandler.hpp"
+#include "EEPROM.h"
 
 #include "esp32-hal-cpu.h"
 #include "esp_pm.h"
@@ -26,6 +27,7 @@ WakeupHandler h_wakeup;
 BluetoothHandler h_bluetooth;
 
 int enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
+int mode_index;
 bool bluetoothTestFlag = true;
 
 gpio_num_t disabledGPIO[] = {
@@ -67,9 +69,35 @@ gpio_num_t disabledGPIO[] = {
 void setup()
 {
     Serial.begin(115200);
-    h_gpio = GpioHandler();
-    h_wakeup = WakeupHandler();
-    powerOptimization();
+
+    pinMode(LEDPIN, OUTPUT);
+
+    if (!EEPROM.begin(EEPROM_SIZE))
+    {
+        delay(1000);
+    }
+
+    mode_index = EEPROM.read(MODE_ADDRESS);
+    Serial.print("mode_index : ");
+    Serial.println(mode_index);
+
+    EEPROM.write(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
+    EEPROM.commit();
+
+    if (mode_index != 0)
+    {
+        digitalWrite(LEDPIN, false);
+        Serial.println("BLE MODE");
+        // h_bluetooth = BluetoothHandler();
+    }
+    else
+    {
+        digitalWrite(LEDPIN, true);
+        Serial.println("SECURITY MODE");
+        h_gpio = GpioHandler();
+        h_wakeup = WakeupHandler();
+        powerOptimization();
+    }
 }
 
 void powerOptimization()
@@ -97,22 +125,14 @@ void loop()
 {
     // Will not actually loop due to how deep-sleep works.
     // Treat this as main()
-    if (bluetoothTestFlag)
+
+    h_wakeup.handle();
+    while (enterSleepInSec-- > 0)
     {
-        Serial.println("Creating bluetooth handler");
-        h_bluetooth = BluetoothHandler();
-        h_bluetooth.run();
+        digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
+        vTaskDelay(1000);
+        Serial.printf("Entering Sleep in %d\n", enterSleepInSec);
     }
-    else
-    {
-        h_wakeup.handle();
-        while (enterSleepInSec-- > 0)
-        {
-            digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
-            vTaskDelay(1000);
-            Serial.printf("Entering Sleep in %d\n", enterSleepInSec);
-        }
-        Serial.printf("Entering Deep Sleep for %d\n", DEEP_SLEEP_FOR_X_SECONDS);
-        esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
-    }
+    Serial.printf("Entering Deep Sleep for %d\n", DEEP_SLEEP_FOR_X_SECONDS);
+    esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
 }
