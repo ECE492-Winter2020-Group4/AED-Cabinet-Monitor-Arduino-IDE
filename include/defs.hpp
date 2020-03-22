@@ -7,6 +7,12 @@
 #define MAX_WIFI_RECONNECT_ATTEMPTS 4
 #define MAX_EMAIL_RESEND_ATTEMPTS 4
 
+#define SERVICE_UUID        "0434f706-7af9-4349-8de8-701c14119b5a"
+#define CHARACTERISTIC_UUID "d1b6c2fe-b2d4-462d-9509-04d745b79d30"
+#define MODE_ADDRESS 0
+#define EEPROM_SIZE 128
+
+
 #define WIFI_SSID "UWS"        // wifi ssid
 #define WIFI_PASSWORD "******" // wifi password for home wifi only
 /* WPA2 enterprise only */
