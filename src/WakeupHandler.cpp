@@ -70,10 +70,10 @@ void WakeupHandler::handle()
         if (mode_index == 1)
         {
             Serial.println("Bluetooth Server Mode");
-            while (mode_index)
-            {
-                h_bluetooth.initServer();
-            }
+            h_bluetooth.initServer();
+
+            // Busy wait
+            while (mode_index){}
         }
         else
         {

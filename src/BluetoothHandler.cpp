@@ -8,12 +8,29 @@
 #include "../include/defs.hpp"
 #include "../include/BluetoothHandler.hpp"
 
-
-BLEServer* pServer = NULL;
-BLECharacteristic* pCharacteristic = NULL;
+BLEServer *pServer = NULL;
+BLECharacteristic *pCharacteristic = NULL;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
+
+String getValue(String data, char separator, int index)
+{
+    int found = 0;
+    int strIndex[] = {0, -1};
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++)
+    {
+        if (data.charAt(i) == separator || i == maxIndex)
+        {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i + 1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
 
 class MyServerCallbacks : public BLEServerCallbacks
 {
@@ -34,33 +51,36 @@ class FlutterAEDCallbacks : public BLECharacteristicCallbacks
     void onWrite(BLECharacteristic *pCharacteristic)
     {
         std::string value = pCharacteristic->getValue();
-        
+
         if (value.length() > 0)
         {
-            Serial.println("*******");
-            Serial.println("New value: ");
 
-            for (int i = 0; i < value.length(); i++)
+            if (strcmp("SLEEP", value.c_str()) == 0)
             {
-                Serial.print(value[i]);
+                Serial.println("Sleep Request from device");
             }
-            Serial.println();
-            Serial.println("*******");
+            else if (strcmp("EMAIL", value.c_str()) == 0)
+            {
+                Serial.println("Email Request from device");
+            }
+            else
+            {
+                String module = getValue(value.c_str(), ',', 0);
+                String location = getValue(value.c_str(), ',', 1);
+                Serial.printf("Received:\nModule: %s\nLocation: %s\n", module, location);
+            }
         }
     }
 };
-
-
-
-
 
 BluetoothHandler::BluetoothHandler()
 {
     Serial.println("Creating BluetoothHandler");
 }
 
-void BluetoothHandler::initServer(){
-        pServer = NULL;
+void BluetoothHandler::initServer()
+{
+    pServer = NULL;
     pCharacteristic = NULL;
     deviceConnected = false;
     oldDeviceConnected = false;
@@ -113,5 +133,5 @@ void BluetoothHandler::run()
     if (deviceConnected && !oldDeviceConnected)
     {
         oldDeviceConnected = deviceConnected;
-    }   
+    }
 }
