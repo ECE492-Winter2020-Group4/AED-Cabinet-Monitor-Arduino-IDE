@@ -9,6 +9,24 @@ WifiHandler h_wifi;
 EmailHandler h_email;
 BluetoothHandler h_bluetooth;
 int mode_index;
+int request;
+String configData;
+
+String readConfigData()
+{
+    char data[100];
+    int len = 0;
+    unsigned char k;
+    k = EEPROM.read(CONFIG_ADDRESS);
+    while (k != '\0' && len < 500)
+    {
+        k = EEPROM.read(CONFIG_ADDRESS + len);
+        data[len] = k;
+        len++;
+    }
+    data[len] = '\0';
+    return String(data);
+}
 
 WakeupHandler::WakeupHandler()
 {
@@ -21,15 +39,51 @@ WakeupHandler::WakeupHandler()
 
     // Set index to button state
     mode_index = EEPROM.read(MODE_ADDRESS);
-    Serial.print("mode_index : ");
-    Serial.println(mode_index);
 
-    EEPROM.write(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
-    EEPROM.commit();
+    request = EEPROM.read(REQUEST_ADDRESS);
 
+    Serial.printf("mode_index: %d\n request: %d\n", mode_index, request);
     h_wifi = WifiHandler();
     h_email = EmailHandler(&h_wifi);
     h_bluetooth = BluetoothHandler();
+
+    switch (request)
+    {
+    // Detected door opening
+    case SLEEP_REQUEST:
+        Serial.println("Request to return to sleep mode");
+        break;
+    case EMAIL_REQUEST:
+        Serial.println("Test Email Requested");
+        mode_index = 1;
+        break;
+    case CONFIG_REQUEST:
+        Serial.println("Configuration Requested");
+        configData = readConfigData();
+        Serial.println(configData);
+        // if (configData.length() > 0)
+        // {
+        //     String module = getMessageString(configData, ',', 0);
+        //     String location = getMessageString(configData, ',', 1);
+
+        //     if (module.length() > 0 && location.length() > 0)
+        //     {
+        //         Serial.print("module : ");
+        //         Serial.println(module);
+
+        //         Serial.print("location : ");
+        //         Serial.println(location);
+        //     }
+        // }
+        mode_index = 1;
+
+        break;
+    default:
+        Serial.println("No Requests");
+    }
+
+    EEPROM.write(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
+    EEPROM.commit();
 }
 
 void WakeupHandler::handle()
@@ -66,14 +120,15 @@ void WakeupHandler::handle()
         break;
     default:
         // Boot up or reset triggered
-        Serial.printf("Button Reset Wakeup: %d\n", esp_sleep_get_wakeup_cause());
         if (mode_index == 1)
         {
             Serial.println("Bluetooth Server Mode");
             h_bluetooth.initServer();
 
             // Busy wait
-            while (mode_index){}
+            while (mode_index)
+            {
+            }
         }
         else
         {
