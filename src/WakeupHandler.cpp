@@ -25,10 +25,10 @@ WakeupHandler::WakeupHandler()
 
     request = readEEPROMValue(REQUEST_ADDRESS);
 
-    Serial.printf("mode_index: %d\nrequest: %d\n", mode_index, request);
     h_wifi = WifiHandler();
     h_email = EmailHandler(&h_wifi);
     h_bluetooth = BluetoothHandler();
+    bool connect_test, send_test = false;
 
     switch (request)
     {
@@ -38,23 +38,22 @@ WakeupHandler::WakeupHandler()
         break;
     case EMAIL_REQUEST:
         Serial.println("Test Email Requested");
-        bool connect_success, send_success = false;
         // connect to wifi and send email alert
         // repeat again if connected to wifi but failed to send alert
-        for (int i = 0; i < 2 && connect_success && !send_success; i++)
+        for (int i = 0; i < 2 && connect_test && !send_test; i++)
         {
             Serial.print("Round ");
             Serial.println(i + 1);
 
             // connect to wifi
             h_wifi.initConnection();
-            connect_success = h_wifi.getConnectionStatus();
+            connect_test = h_wifi.getConnectionStatus();
             // send test email
-            if (connect_success)
+            if (connect_test)
             {
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendTestMsg();
-                send_success = h_email.getEmailStatus();
+                send_test = h_email.getEmailStatus();
             }
             h_wifi.closeConnection();
         }
