@@ -3,7 +3,7 @@
 #include "../include/defs.hpp"
 #include "../include/EmailHandler.hpp"
 #include "../include/BluetoothHandler.hpp"
-#include "EEPROM.h"
+#include "../include/EEPROMHelper.hpp"
 
 WifiHandler h_wifi;
 EmailHandler h_email;
@@ -12,37 +12,20 @@ int mode_index;
 int request;
 String configData;
 
-String readConfigData()
-{
-    char data[100];
-    int len = 0;
-    unsigned char k;
-    k = EEPROM.read(CONFIG_ADDRESS);
-    while (k != '\0' && len < 500)
-    {
-        k = EEPROM.read(CONFIG_ADDRESS + len);
-        data[len] = k;
-        len++;
-    }
-    data[len] = '\0';
-    return String(data);
-}
+
 
 WakeupHandler::WakeupHandler()
 {
     Serial.println("Creating WakeupHandler");
     // Inititalize Button Reading
-    if (!EEPROM.begin(EEPROM_SIZE))
-    {
-        delay(1000);
-    }
+    initEEPROM();
 
     // Set index to button state
-    mode_index = EEPROM.read(MODE_ADDRESS);
+    mode_index = readEEPROMValue(MODE_ADDRESS);
 
-    request = EEPROM.read(REQUEST_ADDRESS);
+    request = readEEPROMValue(REQUEST_ADDRESS);
 
-    Serial.printf("mode_index: %d\n request: %d\n", mode_index, request);
+    Serial.printf("mode_index: %d\nrequest: %d\n", mode_index, request);
     h_wifi = WifiHandler();
     h_email = EmailHandler(&h_wifi);
     h_bluetooth = BluetoothHandler();
@@ -60,30 +43,22 @@ WakeupHandler::WakeupHandler()
     case CONFIG_REQUEST:
         Serial.println("Configuration Requested");
         configData = readConfigData();
-        Serial.println(configData);
-        // if (configData.length() > 0)
-        // {
-        //     String module = getMessageString(configData, ',', 0);
-        //     String location = getMessageString(configData, ',', 1);
-
-        //     if (module.length() > 0 && location.length() > 0)
-        //     {
-        //         Serial.print("module : ");
-        //         Serial.println(module);
-
-        //         Serial.print("location : ");
-        //         Serial.println(location);
-        //     }
-        // }
+        if (configData.length() > 0)
+        {
+            String module = getMessageString(configData, ',', 0);
+            String location = getMessageString(configData, ',', 1);
+            Serial.printf("Module: %s\nLocation: %s\n", module, location);
+        }
         mode_index = 1;
 
         break;
     default:
         Serial.println("No Requests");
     }
-
-    EEPROM.write(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
-    EEPROM.commit();
+    
+    writeToEEPROM(REQUEST_ADDRESS, NO_REQUEST);
+    writeToEEPROM(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
+    
 }
 
 void WakeupHandler::handle()
