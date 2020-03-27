@@ -38,7 +38,29 @@ WakeupHandler::WakeupHandler()
         break;
     case EMAIL_REQUEST:
         Serial.println("Test Email Requested");
+        bool connect_success, send_success = false;
+        // connect to wifi and send email alert
+        // repeat again if connected to wifi but failed to send alert
+        for (int i = 0; i < 2 && connect_success && !send_success; i++)
+        {
+            Serial.print("Round ");
+            Serial.println(i + 1);
+
+            // connect to wifi
+            h_wifi.initConnection();
+            connect_success = h_wifi.getConnectionStatus();
+            // send test email
+            if (connect_success)
+            {
+                delay(500); // wait for 0.5 sec before sending email
+                h_email.sendTestMsg();
+                send_success = h_email.getEmailStatus();
+            }
+            h_wifi.closeConnection();
+        }
+
         mode_index = 1;
+        
         break;
     case CONFIG_REQUEST:
         Serial.println("Configuration Requested");
@@ -55,7 +77,7 @@ WakeupHandler::WakeupHandler()
     default:
         Serial.println("No Requests");
     }
-    
+
     writeToEEPROM(REQUEST_ADDRESS, NO_REQUEST);
     writeToEEPROM(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
     

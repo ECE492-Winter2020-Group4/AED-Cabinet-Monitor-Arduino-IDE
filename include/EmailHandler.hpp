@@ -4,6 +4,7 @@
 #include "WifiHandler.hpp"
 #include "Gsender_32.h"
 #include "defs.hpp"
+#include "EEPROMHelper.hpp"
 
 class EmailHandler
 {

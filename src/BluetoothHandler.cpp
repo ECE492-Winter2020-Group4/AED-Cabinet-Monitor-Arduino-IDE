@@ -68,8 +68,17 @@ void BluetoothHandler::initServer()
     deviceConnected = false;
     oldDeviceConnected = false;
     value = 0;
+    char deviceName[50];
+    String config = readConfigData();
+    String module = getMessageString(config, ',', 0);
+
+    if(module.length() == 0){
+        module = MODULE;
+    }
+
+    sprintf(deviceName, "AED-ESP32-Monitor-%s", module);
     // Create the BLE Device
-    BLEDevice::init("AED-ESP32-Monitor-1");
+    BLEDevice::init(deviceName);
 
     // Create the BLE Server
     pServer = BLEDevice::createServer();
