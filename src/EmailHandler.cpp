@@ -21,8 +21,19 @@ void EmailHandler::sendTestMsg()
     Serial.println("Sending test email...");
     /*Serial.printf("status: %d\n", h_wifi->getConnectionStatus());
     Serial.println("ip:" + h_wifi->getLocalIPAdress());*/
+    String config = readConfigData();
+    String module = getMessageString(config, ',', 0);
+    String location = getMessageString(config, ',', 1);
+
+    if(module.length() == 0){
+        module = MODULE;
+    }
+    if(module.length() == 0){
+        location = LOCATION;
+    }
+    
     String subject = "ESP32 Test from " + String(WIFI_SSID);
-    String content = "Sent via local ip: " + h_wifi->getLocalIPAdress();
+    String content = "Sent via local ip: " + h_wifi->getLocalIPAdress() + "<br>" + "Module: " + module + "<br>Location: " + location + "<br><br>";
     sendEmail(subject, content);
 
     delay(3000);                  // wait for 3 sec
