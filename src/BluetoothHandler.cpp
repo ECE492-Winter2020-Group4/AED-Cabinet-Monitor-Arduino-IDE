@@ -1,36 +1,12 @@
-#include <Arduino.h>
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
-#include <string.h>
 
-#include "../include/defs.hpp"
 #include "../include/BluetoothHandler.hpp"
+#include "../include/EEPROMHelper.hpp"
 
 BLEServer *pServer = NULL;
 BLECharacteristic *pCharacteristic = NULL;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
-
-String getValue(String data, char separator, int index)
-{
-    int found = 0;
-    int strIndex[] = {0, -1};
-    int maxIndex = data.length() - 1;
-
-    for (int i = 0; i <= maxIndex && found <= index; i++)
-    {
-        if (data.charAt(i) == separator || i == maxIndex)
-        {
-            found++;
-            strIndex[0] = strIndex[1] + 1;
-            strIndex[1] = (i == maxIndex) ? i + 1 : i;
-        }
-    }
-    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
 
 class MyServerCallbacks : public BLEServerCallbacks
 {
@@ -57,18 +33,25 @@ class FlutterAEDCallbacks : public BLECharacteristicCallbacks
 
             if (strcmp("SLEEP", value.c_str()) == 0)
             {
+                writeToEEPROM(REQUEST_ADDRESS, SLEEP_REQUEST);
                 Serial.println("Sleep Request from device");
             }
             else if (strcmp("EMAIL", value.c_str()) == 0)
             {
+                writeToEEPROM(REQUEST_ADDRESS, EMAIL_REQUEST);
                 Serial.println("Email Request from device");
             }
             else
             {
-                String module = getValue(value.c_str(), ',', 0);
-                String location = getValue(value.c_str(), ',', 1);
+                writeToEEPROM(REQUEST_ADDRESS, CONFIG_REQUEST);
+
+                String module = getMessageString(value.c_str(), ',', 0);
+                String location = getMessageString(value.c_str(), ',', 1);
                 Serial.printf("Received:\nModule: %s\nLocation: %s\n", module, location);
+                // Modify config information
+                writeConfig(value.c_str());
             }
+            ESP.restart();
         }
     }
 };
@@ -85,8 +68,17 @@ void BluetoothHandler::initServer()
     deviceConnected = false;
     oldDeviceConnected = false;
     value = 0;
+    char deviceName[50];
+    String config = readConfigData();
+    String module = getMessageString(config, ',', 0);
+
+    if(module.length() == 0){
+        module = MODULE;
+    }
+
+    sprintf(deviceName, "AED-ESP32-Monitor-%s", module);
     // Create the BLE Device
-    BLEDevice::init("AED-ESP32-Monitor-1");
+    BLEDevice::init(deviceName);
 
     // Create the BLE Server
     pServer = BLEDevice::createServer();

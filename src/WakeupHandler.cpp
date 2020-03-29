@@ -3,33 +3,83 @@
 #include "../include/defs.hpp"
 #include "../include/EmailHandler.hpp"
 #include "../include/BluetoothHandler.hpp"
-#include "EEPROM.h"
+#include "../include/EEPROMHelper.hpp"
 
 WifiHandler h_wifi;
 EmailHandler h_email;
 BluetoothHandler h_bluetooth;
 int mode_index;
+int request;
+String configData;
+
+
 
 WakeupHandler::WakeupHandler()
 {
     Serial.println("Creating WakeupHandler");
     // Inititalize Button Reading
-    if (!EEPROM.begin(EEPROM_SIZE))
-    {
-        delay(1000);
-    }
+    initEEPROM();
 
     // Set index to button state
-    mode_index = EEPROM.read(MODE_ADDRESS);
-    Serial.print("mode_index : ");
-    Serial.println(mode_index);
+    mode_index = readEEPROMValue(MODE_ADDRESS);
 
-    EEPROM.write(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
-    EEPROM.commit();
+    request = readEEPROMValue(REQUEST_ADDRESS);
 
     h_wifi = WifiHandler();
     h_email = EmailHandler(&h_wifi);
     h_bluetooth = BluetoothHandler();
+    bool connect_test, send_test = false;
+
+    switch (request)
+    {
+    // Detected door opening
+    case SLEEP_REQUEST:
+        Serial.println("Request to return to sleep mode");
+        break;
+    case EMAIL_REQUEST:
+        Serial.println("Test Email Requested");
+        // connect to wifi and send email alert
+        // repeat again if connected to wifi but failed to send alert
+        for (int i = 0; i < 2 && connect_test && !send_test; i++)
+        {
+            Serial.print("Round ");
+            Serial.println(i + 1);
+
+            // connect to wifi
+            h_wifi.initConnection();
+            connect_test = h_wifi.getConnectionStatus();
+            // send test email
+            if (connect_test)
+            {
+                delay(500); // wait for 0.5 sec before sending email
+                h_email.sendTestMsg();
+                send_test = h_email.getEmailStatus();
+            }
+            h_wifi.closeConnection();
+        }
+
+        mode_index = 1;
+        
+        break;
+    case CONFIG_REQUEST:
+        Serial.println("Configuration Requested");
+        configData = readConfigData();
+        if (configData.length() > 0)
+        {
+            String module = getMessageString(configData, ',', 0);
+            String location = getMessageString(configData, ',', 1);
+            Serial.printf("Module: %s\nLocation: %s\n", module, location);
+        }
+        mode_index = 1;
+
+        break;
+    default:
+        Serial.println("No Requests");
+    }
+
+    writeToEEPROM(REQUEST_ADDRESS, NO_REQUEST);
+    writeToEEPROM(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
+    
 }
 
 void WakeupHandler::handle()
@@ -66,14 +116,15 @@ void WakeupHandler::handle()
         break;
     default:
         // Boot up or reset triggered
-        Serial.printf("Button Reset Wakeup: %d\n", esp_sleep_get_wakeup_cause());
         if (mode_index == 1)
         {
             Serial.println("Bluetooth Server Mode");
             h_bluetooth.initServer();
 
             // Busy wait
-            while (mode_index){}
+            while (mode_index)
+            {
+            }
         }
         else
         {
