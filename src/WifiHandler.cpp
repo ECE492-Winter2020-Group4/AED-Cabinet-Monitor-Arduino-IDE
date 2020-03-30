@@ -71,10 +71,10 @@ uint8_t WifiHandler::wifiConnect()
     int counter = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
-        delay(500);
+        delay(1000);
         Serial.print(".");
         counter++;
-        if (counter >= 60)
+        if (counter >= MAX_WAIT_TIME_SECONDS)
         { //after 30 seconds timeout - restart
             //ESP.restart();
             Serial.println("");
