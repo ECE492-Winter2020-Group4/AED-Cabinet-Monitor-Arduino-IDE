@@ -16,23 +16,25 @@ String configData;
 WakeupHandler::WakeupHandler()
 {
     Serial.println("Creating WakeupHandler");
-    // Inititalize Button Reading
+    // Inititalize Button and EEPROM Reading
     initEEPROM();
 
-    // Set index to button state
+    // Read Address values for mode and request type
     mode_index = readEEPROMValue(MODE_ADDRESS);
-
     request = readEEPROMValue(REQUEST_ADDRESS);
 
+    // Inititalize handlers
     h_wifi = WifiHandler();
     h_email = EmailHandler(&h_wifi);
     h_bluetooth = BluetoothHandler();
+
     bool connect_test, send_test = false;
 
+    // Have device respond based on what kind of request was sent
     switch (request)
     {
-    // Detected door opening
     case SLEEP_REQUEST:
+        // Switch mode index back to regular operation
         Serial.println("Request to return to sleep mode");
         break;
     case EMAIL_REQUEST:
@@ -53,31 +55,46 @@ WakeupHandler::WakeupHandler()
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendTestMsg();
                 send_test = h_email.getEmailStatus();
+
+                // Have LED blink if email sent successfully
+                if (send_test)
+                {
+                    wakeUpBlink();
+                }
             }
             h_wifi.closeConnection();
         }
 
-        mode_index = 1;
+        // Keep operation in bluetooth server mode
+        mode_index = BLE_MODE;
 
         break;
     case CONFIG_REQUEST:
         Serial.println("Configuration Requested");
+
+        // Read Configuration data from EEPROM
         configData = readConfigData();
         if (configData.length() > 0)
         {
+            // Get module and location from config data
             String module = getMessageString(configData, ',', 0);
             String location = getMessageString(configData, ',', 1);
             Serial.printf("Module: %s\nLocation: %s\n", module, location);
         }
-        mode_index = 1;
+        // Keep operation in bluetooth server mode
+        mode_index = BLE_MODE;
 
         break;
     default:
         Serial.println("No Requests");
     }
 
+    // After request was handled save to EEPROM we no longer have a request
     writeToEEPROM(REQUEST_ADDRESS, NO_REQUEST);
-    writeToEEPROM(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
+
+    // Write to EEPROM current mode of operation
+    // If device was not in Regular mode, switch to regular mode, otherwise switch to BLE mode 
+    writeToEEPROM(MODE_ADDRESS, mode_index != REGULAR_MODE ? REGULAR_MODE : BLE_MODE);
 }
 
 void WakeupHandler::handle()
@@ -104,6 +121,8 @@ void WakeupHandler::handle()
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendOpenDoorAlert();
                 send_success = h_email.getEmailStatus();
+
+                // Have LED blink if email sent successfully
                 if (send_success)
                 {
                     wakeUpBlink();
@@ -114,11 +133,12 @@ void WakeupHandler::handle()
         break;
     case ESP_SLEEP_WAKEUP_TIMER:
         Serial.println("Timer Wakeup");
-        // TODO : LOG
         break;
     default:
         // Boot up or reset triggered
-        if (mode_index == 1)
+        
+        // If device in BLE mode, initialize bluetooth server
+        if (mode_index == BLE_MODE)
         {
             Serial.println("Bluetooth Server Mode");
             h_bluetooth.initServer();
@@ -128,9 +148,10 @@ void WakeupHandler::handle()
             {
             }
         }
+        // otherwise in regular mode and end function
         else
         {
-            Serial.println("Sleep Mode");
+            Serial.println("Regular Mode");
             break;
         }
     }

@@ -69,14 +69,21 @@ void BluetoothHandler::initServer()
     oldDeviceConnected = false;
     value = 0;
     char deviceName[50];
+
+    // Read Configuration data from EEPROM
     String config = readConfigData();
+
+    // Get module from config data
     String module = getMessageString(config, ',', 0);
 
+    // If nothing in config data, use default device config
     if(module.length() == 0){
         module = MODULE;
     }
 
+    // Create device name based on module
     sprintf(deviceName, "AED-ESP32-Monitor-%s", module);
+
     // Create the BLE Device
     BLEDevice::init(deviceName);
 
@@ -95,7 +102,9 @@ void BluetoothHandler::initServer()
             BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_INDICATE);
 
+    // Create callback from mobile application Characteristic
     pCharacteristic->setCallbacks(new FlutterAEDCallbacks());
+
     // Create a BLE Descriptor
     pCharacteristic->addDescriptor(new BLE2902());
 

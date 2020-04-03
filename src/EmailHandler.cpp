@@ -19,12 +19,15 @@ EmailHandler::EmailHandler(WifiHandler *wifiHandler)
 void EmailHandler::sendTestMsg()
 {
     Serial.println("Sending test email...");
-    /*Serial.printf("status: %d\n", h_wifi->getConnectionStatus());
-    Serial.println("ip:" + h_wifi->getLocalIPAdress());*/
+
+    // Read Configuration data from EEPROM
     String config = readConfigData();
+
+    // Get module and location from config data
     String module = getMessageString(config, ',', 0);
     String location = getMessageString(config, ',', 1);
 
+    // If nothing in config data, use default device config
     if(module.length() == 0){
         module = MODULE;
     }
@@ -44,10 +47,15 @@ void EmailHandler::sendTestMsg()
 void EmailHandler::sendOpenDoorAlert()
 {
     Serial.println("Sending alert when AED door is open...");
+
+    // Read Configuration data from EEPROM
     String config = readConfigData();
+
+    // Get module and location from config data
     String module = getMessageString(config, ',', 0);
     String location = getMessageString(config, ',', 1);
 
+    // If nothing in config data, use default device config
     if(module.length() == 0){
         module = MODULE;
     }

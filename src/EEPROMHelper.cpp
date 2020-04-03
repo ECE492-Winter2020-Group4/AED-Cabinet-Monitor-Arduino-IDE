@@ -7,10 +7,12 @@ void initEEPROM(){
     }
 }
 
+// Read EEPROM value from given address
 int readEEPROMValue(int address){
     return EEPROM.read(address);
 }
 
+// Returns either module or location by parsing config data based on index
 String getMessageString(String data, char separator, int index)
 {
     int found = 0;
@@ -29,6 +31,7 @@ String getMessageString(String data, char separator, int index)
     return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
+// Read configuration data stored in config address from EEPROM
 String readConfigData()
 {
     char data[100];
@@ -45,6 +48,7 @@ String readConfigData()
     return String(data);
 }
 
+// Write configuration data to EEPROM address
 void writeConfig(String data)
 {
     int data_size = data.length();
