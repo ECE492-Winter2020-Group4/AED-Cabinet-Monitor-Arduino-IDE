@@ -8,8 +8,6 @@
 bool ledStatus = false;
 extern int enterSleepInSec;
 
-void wakeUpBlink();
-
 GpioHandler::GpioHandler()
 {
     Serial.println("Creating GpioHandler");

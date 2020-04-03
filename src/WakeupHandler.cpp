@@ -3,6 +3,7 @@
 #include "../include/defs.hpp"
 #include "../include/EmailHandler.hpp"
 #include "../include/BluetoothHandler.hpp"
+#include "../include/GpioHandler.hpp"
 #include "../include/EEPROMHelper.hpp"
 
 WifiHandler h_wifi;
@@ -11,8 +12,6 @@ BluetoothHandler h_bluetooth;
 int mode_index;
 int request;
 String configData;
-
-
 
 WakeupHandler::WakeupHandler()
 {
@@ -59,7 +58,7 @@ WakeupHandler::WakeupHandler()
         }
 
         mode_index = 1;
-        
+
         break;
     case CONFIG_REQUEST:
         Serial.println("Configuration Requested");
@@ -79,7 +78,6 @@ WakeupHandler::WakeupHandler()
 
     writeToEEPROM(REQUEST_ADDRESS, NO_REQUEST);
     writeToEEPROM(MODE_ADDRESS, mode_index != 0 ? 0 : 1);
-    
 }
 
 void WakeupHandler::handle()
@@ -106,6 +104,10 @@ void WakeupHandler::handle()
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendOpenDoorAlert();
                 send_success = h_email.getEmailStatus();
+                if (send_success)
+                {
+                    wakeUpBlink();
+                }
             }
             h_wifi.closeConnection();
         }

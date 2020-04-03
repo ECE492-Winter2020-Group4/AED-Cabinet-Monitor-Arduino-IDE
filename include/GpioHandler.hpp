@@ -8,3 +8,5 @@ class GpioHandler
     private:
         static void isr();
 };
+
+void wakeUpBlink();
