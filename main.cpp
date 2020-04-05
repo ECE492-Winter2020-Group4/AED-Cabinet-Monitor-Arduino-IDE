@@ -62,7 +62,7 @@ gpio_num_t disabledGPIO[] = {
 
 void setup()
 {
-    Serial.begin(115200);
+    Serial.begin(115200);   // Default Baud rate to connect the terminal to.
     h_gpio = GpioHandler();
     h_wakeup = WakeupHandler();
     powerOptimization();
@@ -72,17 +72,26 @@ void powerOptimization()
 {
     setCpuFrequencyMhz(80); // Minimum possible for Wifi, and BT
 
+    // Disable RTC memory when in deep sleep
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
+
+    // Disable XTAL-Oscelator when in Deep sleep Mode
     esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL, ESP_PD_OPTION_OFF);
+
+    // Configure default power domain to MAX power saving
     esp_sleep_pd_config(ESP_PD_DOMAIN_MAX, ESP_PD_OPTION_OFF);
 
+    // Disable ROM logging in deep sleep mode
     esp_deep_sleep_disable_rom_logging();
 
+    // Disable GPIO Memory when in deep sleep mode
     rtc_gpio_force_hold_dis_all();
 
+    // Apply to all unused GPIO pins
     for (gpio_num_t i : disabledGPIO)
     {
+        // Disable Pullup/Pulldown resistors when in deep sleep mode
         rtc_gpio_isolate(i);
         gpio_pulldown_dis(i);
         gpio_pullup_dis(i);
@@ -92,24 +101,34 @@ void powerOptimization()
 void loop()
 {
     // Will not actually loop due to how deep-sleep works.
+    // This will execute after setup() is called. 
+    // Will execute once, then enter deep sleep at the end
     // Treat this as main()
 
+    // Handle the wakeup cause accordingly
     h_wakeup.handle();
+
+    // Wait until STAY_AWAKE_FOR_X_SECONDS seconds has elapsed, then go to sleep.
+    // If door is opened before the timer expires, reset it to STAY_AWAKE_FOR_X_SECONDS, and start counting again
     while (enterSleepInSec-- > 0)
     {
         if (digitalRead(gpio_num_t(GPIO_DETECTOR)) == 1)
         {
-            // Open
+            // Door is open
             enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
             Serial.printf("Staying awake\n");
         }
         else
         {
+            // Door is closed
             Serial.printf("Entering Sleep in %d sec\n", enterSleepInSec);
         }
+        // LED for visual cue
         digitalWrite(gpio_num_t(GPIO_LED), digitalRead(gpio_num_t(GPIO_DETECTOR))); // Safety Check
         vTaskDelay(1000);
     }
     Serial.printf("Entering Deep Sleep for %d sec\n", DEEP_SLEEP_FOR_X_SECONDS);
-    esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000);
+
+    // Deep Sleep
+    esp_deep_sleep(DEEP_SLEEP_FOR_X_SECONDS * 1000000); // Arg is in microseconds
 }

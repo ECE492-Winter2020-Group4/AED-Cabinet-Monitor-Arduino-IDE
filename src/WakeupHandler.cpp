@@ -1,14 +1,16 @@
 #include <Arduino.h>
-#include "../include/WakeupHandler.hpp"
-#include "../include/defs.hpp"
-#include "../include/EmailHandler.hpp"
-#include "../include/BluetoothHandler.hpp"
-#include "../include/GpioHandler.hpp"
-#include "../include/EEPROMHelper.hpp"
 
-WifiHandler h_wifi;
-EmailHandler h_email;
+#include "../include/BluetoothHandler.hpp"
+#include "../include/defs.hpp"
+#include "../include/EEPROMHelper.hpp"
+#include "../include/EmailHandler.hpp"
+#include "../include/GpioHandler.hpp"
+#include "../include/WakeupHandler.hpp"
+
 BluetoothHandler h_bluetooth;
+EmailHandler h_email;
+WifiHandler h_wifi;
+
 int mode_index;
 int request;
 String configData;
