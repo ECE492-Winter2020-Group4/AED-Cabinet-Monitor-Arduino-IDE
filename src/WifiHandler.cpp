@@ -5,6 +5,9 @@ WifiHandler::WifiHandler()
     Serial.println("Creating WifiHandler");
 }
 
+/**
+ * Initiate wifi connection
+ */
 void WifiHandler::initConnection()
 {
     // Initialize
@@ -32,6 +35,9 @@ void WifiHandler::initConnection()
     }
 }
 
+/**
+ * Close wifi connection and reset the connection status
+ */
 void WifiHandler::closeConnection()
 {
     WiFi.disconnect(true);
@@ -62,20 +68,23 @@ uint8_t WifiHandler::wifiConnect()
         Serial.print("Begin WiFi");
         WiFi.begin(WIFI_SSID); //connect to wifi
     }
+    // connect to non-enterprise wifi
     else
     {
         Serial.print("Begin WiFi");
         WiFi.begin(WIFI_SSID, WIFI_PASSWORD); //connect to wifi
     }
 
+    // wait for wifi connection status
     int counter = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(1000);
         Serial.print(".");
         counter++;
-        if (counter >= MAX_WAIT_TIME_SECONDS)
-        { //after 30 seconds timeout - restart
+        // wifi connection time out: connection failed
+        if (counter >= connect_wait_time)
+        {
             //ESP.restart();
             Serial.println("");
             return false;
@@ -100,7 +109,7 @@ void WifiHandler::reconnect()
     while (!connection_state && reconnect_attempt < max_reconnect_attempts)
     {
         delay(500); // wait for 0.5 sec
-        if (millis() > (ts + reconnect_interval) && !connection_state)
+        if (millis() > (ts + connect_wait_time * 1000) && !connection_state)
         {
             Serial.print("Connection failed, reconnect attempt ");
             Serial.println(reconnect_attempt + 1);

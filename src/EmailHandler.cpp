@@ -1,89 +1,65 @@
 #include "../include/EmailHandler.hpp"
 
 Gsender *EmailHandler::gsender = Gsender::Instance();
+// receiver_address could be a list of receivers: e.g. {"a@ualberta.ca", "b@ualberta.ca", "c@ualberta.ca", "d@ualberta.ca"};
 String receiver_address[] = {RECEIVER_EMAIL_ADDRESS};
-//{"jiayun@ualberta.ca", "kebbi@ualberta.ca", "dn2@ualberta.ca", "jicheng@ualberta.ca"};
 const String automated_msg = "This is an automated message. Please do not reply.";
 
-// not used
+/**
+ * Not used!
+ */
 EmailHandler::EmailHandler()
 {
 }
 
+/**
+ * Initialization
+ */
 EmailHandler::EmailHandler(WifiHandler *wifiHandler)
 {
     Serial.println("Creating EmailHandler");
     h_wifi = wifiHandler;
 }
 
+/**
+ * Send an email for testing
+ */
 void EmailHandler::sendTestMsg()
 {
     Serial.println("Sending test email...");
 
-    // Read Configuration data from EEPROM
-    String config = readConfigData();
+    //getDeviceData();
 
-    // Get module and location from config data
-    String module = getMessageString(config, ',', 0);
-    String location = getMessageString(config, ',', 1);
-
-    // If nothing in config data, use default device config
-    if(module.length() == 0){
-        module = MODULE;
-    }
-    if(module.length() == 0){
-        location = LOCATION;
-    }
-    
     String subject = "ESP32 Test from " + String(WIFI_SSID);
     String content = "Sent via local ip: " + h_wifi->getLocalIPAdress() + "<br>" + "Module: " + module + "<br>Location: " + location + "<br><br>";
     sendEmail(subject, content);
 
-    delay(3000);                  // wait for 3 sec
+    delay(send_wait_time * 1000);
     if (!sent_state)              // if not successful
         resend(subject, content); // trying to send again for # attempts
 }
 
+/**
+ * Send an alert email about AED door being open
+ */
 void EmailHandler::sendOpenDoorAlert()
 {
     Serial.println("Sending alert when AED door is open...");
 
-    // Read Configuration data from EEPROM
-    String config = readConfigData();
-
-    // Get module and location from config data
-    String module = getMessageString(config, ',', 0);
-    String location = getMessageString(config, ',', 1);
-
-    // If nothing in config data, use default device config
-    if(module.length() == 0){
-        module = MODULE;
-    }
-    if(module.length() == 0){
-        location = LOCATION;
-    }
+    //getDeviceData();
 
     String subject = "AED cabinet - open door alert";
     String content = "Module: " + module + "<br>Location: " + location + "<br><br>" + automated_msg;
     sendEmail(subject, content);
 
-    delay(3000);                  // wait for 3 sec
+    delay(send_wait_time * 1000);
     if (!sent_state)              // if not successful
         resend(subject, content); // trying to send again for # attempts
 }
 
-void EmailHandler::sendLowBatteryAlert()
-{
-    Serial.println("Sending alert when battery power is low...");
-    String subject = "AED cabinet - low battery power alert";
-    String content = "Module: " + String(MODULE) + "<br>Location: " + String(LOCATION) + "<br><br>" + automated_msg;
-    sendEmail(subject, content);
-
-    delay(3000);                  // wait for 3 sec
-    if (!sent_state)              // if not successful
-        resend(subject, content); // trying to send again for # attempts
-}
-
+/**
+ * Attempt to send an email
+ */
 void EmailHandler::sendEmail(const String &subject, const String &content)
 {
     if (!h_wifi->getConnectionStatus())
@@ -107,7 +83,7 @@ void EmailHandler::sendEmail(const String &subject, const String &content)
 }
 
 /**
- * Attempt to resend email every sec until successful or max # attempts is reached
+ * Attempt to resend email until successful or max # attempts is reached
  */
 void EmailHandler::resend(const String &subject, const String &content)
 {
@@ -115,17 +91,43 @@ void EmailHandler::resend(const String &subject, const String &content)
     uint32_t ts = millis();
     while (h_wifi->getConnectionStatus() && !sent_state && resend_attempt < max_resend_attempts)
     {
-        delay(3000); // wait for 3 sec
-
         Serial.println("");
         Serial.print("Resend attempt ");
         Serial.println(resend_attempt + 1);
 
         sendEmail(subject, content);
         resend_attempt += 1;
+
+        delay(send_wait_time * 1000);
     }
 }
 
+/**
+ * Read data from EEPROM for email content
+ */
+void EmailHandler::getDeviceData()
+{
+    // Read Configuration data from EEPROM
+    String config = readConfigData();
+
+    // Get module and location from config data
+    module = getMessageString(config, ',', 0);
+    location = getMessageString(config, ',', 1);
+
+    // If nothing in config data, use default device config
+    if (module.length() == 0)
+    {
+        module = MODULE;
+    }
+    if (module.length() == 0)
+    {
+        location = LOCATION;
+    }
+}
+
+/**
+ * Attempt to resend email until successful or max # attempts is reached
+ */
 bool EmailHandler::getEmailStatus()
 {
     return (bool)sent_state;
