@@ -1,3 +1,5 @@
+Please see Application Notes for full usage: https://docs.google.com/document/d/1z3vVcc0KK2gyxqZ8YIz-DgapLzbS-YSmvJv0rFvbp5M/edit
+
 ## How to run the program in VS Code:
 Please ensure the 'Arduino' module is installed for VS Code. 
 1. Hit 'f1', and selected 'board config', and choose 'esp32 sparkfun thing'
