@@ -10,7 +10,7 @@ extern int enterSleepInSec; // Imported from Defs.hpp
 GpioHandler::GpioHandler()
 {
     Serial.println("Creating GpioHandler");
-    wakeUpBlink();
+    blinkXTimes(1);
 
     // Configure GPIO to support ISR
     pinMode(GPIO_DETECTOR, INPUT_PULLUP);
@@ -32,10 +32,10 @@ void GpioHandler::isr() {
     enterSleepInSec = STAY_AWAKE_FOR_X_SECONDS;
 }
 
-void wakeUpBlink()
+void blinkXTimes(int x_times)
 {
-    // Blink 3 times.
-    for(int i = 0; i < 3 ; i++)
+    // Blink x times.
+    for(int i = 0; i < x_times ; i++)
     {
         pinMode(GPIO_LED, INPUT);
         vTaskDelay(100);

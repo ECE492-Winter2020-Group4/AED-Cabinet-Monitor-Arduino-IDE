@@ -9,4 +9,4 @@ class GpioHandler
         static void isr();
 };
 
-void wakeUpBlink();
+void blinkXTimes(int x_times);

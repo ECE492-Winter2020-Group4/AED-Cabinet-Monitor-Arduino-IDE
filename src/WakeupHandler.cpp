@@ -58,12 +58,12 @@ WakeupHandler::WakeupHandler()
             {
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendTestMsg();
-                connect_success = h_email.getEmailStatus();
+                send_success = h_email.getEmailStatus();
 
                 // Have LED blink if email sent successfully
                 if (send_success)
                 {
-                    wakeUpBlink();
+                    blinkXTimes(3);
                 }
             }
             h_wifi.closeConnection();
@@ -124,6 +124,7 @@ void WakeupHandler::handle()
             // send open door alert email
             if (connect_success)
             {
+                blinkXTimes(2);
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendOpenDoorAlert();
                 send_success = h_email.getEmailStatus();
@@ -131,7 +132,7 @@ void WakeupHandler::handle()
                 // Have LED blink if email sent successfully
                 if (send_success)
                 {
-                    wakeUpBlink();
+                    blinkXTimes(3);
                 }
             }
             h_wifi.closeConnection();
