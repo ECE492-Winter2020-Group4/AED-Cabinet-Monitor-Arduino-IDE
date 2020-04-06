@@ -28,7 +28,7 @@ void EmailHandler::sendTestMsg()
 {
     Serial.println("Sending test email...");
 
-    //getDeviceData();
+    getDeviceData();
 
     String subject = "ESP32 Test from " + String(WIFI_SSID);
     String content = "Sent via local ip: " + h_wifi->getLocalIPAdress() + "<br>" + "Module: " + module + "<br>Location: " + location + "<br><br>";
@@ -46,7 +46,7 @@ void EmailHandler::sendOpenDoorAlert()
 {
     Serial.println("Sending alert when AED door is open...");
 
-    //getDeviceData();
+    getDeviceData();
 
     String subject = "AED cabinet - open door alert";
     String content = "Module: " + module + "<br>Location: " + location + "<br><br>" + automated_msg;
