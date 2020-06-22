@@ -30,17 +30,13 @@ enum WifiType
 
 // Only for WPA2 Enterprise Networks
 #define EAP_ANONYMOUS_IDENTITY "anonymous" // (Only used when ENTERPRISE_WIFI is selected)
-#define EAP_IDENTITY "******"              // ualberta ccid                  // (Only used when ENTERPRISE_WIFI is selected)
-#define EAP_PASSWORD "******"              // ualberta password              // (Only used when ENTERPRISE_WIFI is selected)
+#define EAP_IDENTITY "oemmgr"              // ualberta ccid                  // (Only used when ENTERPRISE_WIFI is selected)
+#define EAP_PASSWORD "oempass_ac03"              // ualberta password              // (Only used when ENTERPRISE_WIFI is selected)
 
 // Email Account Settings
-#define SENDER_GMAIL_ADDRESS "uaececapstone@gmail.com" // sender's gmail address
-#define SENDER_GMAIL_PASSWORD "******"                 // sender's gmail address
-#define RECEIVER_EMAIL_ADDRESS "******"                // receiver's gmail address
-
-// Bluetooth UUID Settings
-#define SERVICE_UUID "0434f706-7af9-4349-8de8-701c14119b5a"
-#define CHARACTERISTIC_UUID "d1b6c2fe-b2d4-462d-9509-04d745b79d30"
+#define SENDER_GMAIL_ADDRESS "oemmgr@ualberta.ca" // sender's gmail address
+#define SENDER_GMAIL_PASSWORD "oempass_ac03"                 // sender's gmail address
+#define RECEIVER_EMAIL_ADDRESS "oemmgr@ualberta.ca"                // receiver's gmail address
 
 /////////////////////////////////////////////////////////////////
 // Hardware Settings                                           //
@@ -52,17 +48,11 @@ enum WifiType
 
 // Deep Sleep Settings
 #define DEEP_SLEEP_FOR_X_SECONDS 60
-#define STAY_AWAKE_FOR_X_SECONDS 10
+#define STAY_AWAKE_FOR_X_SECONDS 5
 
 /////////////////////////////////////////////////////////////////
 // Internal Settings                                           //
 /////////////////////////////////////////////////////////////////
-
-// EEPROM Variables
-#define EEPROM_SIZE 256
-#define MODE_ADDRESS 0
-#define REQUEST_ADDRESS 2
-#define CONFIG_ADDRESS 10
 
 // Request Variables
 #define NO_REQUEST 0

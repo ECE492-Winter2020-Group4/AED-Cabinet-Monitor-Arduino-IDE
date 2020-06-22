@@ -4,7 +4,6 @@
 #include "WifiHandler.hpp"
 #include "Gsender_32.h"
 #include "defs.hpp"
-#include "EEPROMHelper.hpp"
 
 class EmailHandler
 {
@@ -25,5 +24,4 @@ private:
     uint16_t max_resend_attempts = MAX_EMAIL_RESEND_ATTEMPTS; // Max # of attempts for resending email
     void sendEmail(const String &subject, const String &content);
     void resend(const String &subject, const String &content);
-    void getDeviceData();
 };

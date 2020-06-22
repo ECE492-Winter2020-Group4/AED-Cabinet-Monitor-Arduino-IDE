@@ -28,10 +28,9 @@ void EmailHandler::sendTestMsg()
 {
     Serial.println("Sending test email...");
 
-    getDeviceData();
 
     String subject = "ESP32 Test from " + String(WIFI_SSID);
-    String content = "Sent via local ip: " + h_wifi->getLocalIPAdress() + "<br>" + "Module: " + module + "<br>Location: " + location + "<br><br>";
+    String content = "Sent via local ip: " + h_wifi->getLocalIPAdress() + "<br>" + "Module: " + MODULE + "<br>Location: " + LOCATION + "<br><br>";
     sendEmail(subject, content);
 
     delay(send_wait_time * 1000);
@@ -46,10 +45,9 @@ void EmailHandler::sendOpenDoorAlert()
 {
     Serial.println("Sending alert when AED door is open...");
 
-    getDeviceData();
 
     String subject = "AED cabinet - open door alert";
-    String content = "Module: " + module + "<br>Location: " + location + "<br><br>" + automated_msg;
+    String content = "Module: " + module + "<br>Location: " + LOCATION + "<br><br>" + automated_msg;
     sendEmail(subject, content);
 
     delay(send_wait_time * 1000);
@@ -102,28 +100,6 @@ void EmailHandler::resend(const String &subject, const String &content)
     }
 }
 
-/**
- * Read data from EEPROM for email content
- */
-void EmailHandler::getDeviceData()
-{
-    // Read Configuration data from EEPROM
-    String config = readConfigData();
-
-    // Get module and location from config data
-    module = getMessageString(config, ',', 0);
-    location = getMessageString(config, ',', 1);
-
-    // If nothing in config data, use default device config
-    if (module.length() == 0)
-    {
-        module = MODULE;
-    }
-    if (module.length() == 0)
-    {
-        location = LOCATION;
-    }
-}
 
 /**
  * Attempt to resend email until successful or max # attempts is reached
