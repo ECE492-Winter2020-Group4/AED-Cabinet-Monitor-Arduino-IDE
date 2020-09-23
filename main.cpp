@@ -60,14 +60,6 @@ gpio_num_t disabledGPIO[] = {
     GPIO_NUM_38,
     GPIO_NUM_39};
 
-void setup()
-{
-    Serial.begin(115200);   // Default Baud rate to connect the terminal to.
-    h_gpio = GpioHandler();
-    h_wakeup = WakeupHandler();
-    powerOptimization();
-}
-
 void powerOptimization()
 {
     setCpuFrequencyMhz(80); // Minimum possible for Wifi, and BT
@@ -96,6 +88,14 @@ void powerOptimization()
         gpio_pulldown_dis(i);
         gpio_pullup_dis(i);
     }
+}
+
+void setup()
+{
+    Serial.begin(115200);   // Default Baud rate to connect the terminal to.
+    h_gpio = GpioHandler();
+    h_wakeup = WakeupHandler();
+    powerOptimization();
 }
 
 void loop()
