@@ -3,7 +3,7 @@
 Gsender *EmailHandler::gsender = Gsender::Instance();
 // receiver_address could be a list of receivers: e.g. {"a@ualberta.ca", "b@ualberta.ca", "c@ualberta.ca", "d@ualberta.ca"};
 String receiver_address[] = {RECEIVER_EMAIL_ADDRESS};
-const String automated_msg = "This is an automated message. Please do not reply.";
+const String automated_msg = "This is an automated message.<br>Please do not reply.";
 
 /**
  * Not used!
@@ -43,7 +43,7 @@ void EmailHandler::sendTestMsg()
  */
 void EmailHandler::sendOpenDoorAlert()
 {
-    Serial.println("Sending alert when AED door is open...");
+    Serial.println("Sending alert when connected to Email Server.");
 
 
     String subject = "AED cabinet - open door alert";
@@ -69,7 +69,10 @@ void EmailHandler::sendEmail(const String &subject, const String &content)
     int numOfReceivers = sizeof(receiver_address) / sizeof(receiver_address[0]);
     if (gsender->Subject(subject)->Send(numOfReceivers, receiver_address, content))
     {
-        Serial.println("Message send.");
+        Serial.print("Sending message from ");
+        Serial.print(SENDER_GMAIL_ADDRESS);
+        Serial.print(" to ");
+        Serial.println(RECEIVER_EMAIL_ADDRESS);
         sent_state = 1;
     }
     else

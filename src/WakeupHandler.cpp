@@ -47,7 +47,7 @@ void WakeupHandler::handle()
             // send open door alert email
             if (connect_success)
             {
-                Serial.print("SUCC");
+                Serial.println("Success");
                 blinkXTimes(2);
                 delay(500); // wait for 0.5 sec before sending email
                 h_email.sendOpenDoorAlert();
@@ -59,7 +59,7 @@ void WakeupHandler::handle()
                     blinkXTimes(3);
                 }
             }
-            Serial.print("DONE");
+            Serial.println("Success");
             h_wifi.closeConnection();
         }
         break;

@@ -11,10 +11,10 @@
 #define LOCATION "UAlberta" // default location
 
 // Wifi & Email Time Settings
-#define WIFI_CONNECT_WAIT_TIME_SECONDS 30 // wait time for connection status after attempting to connect to wifi
-#define MAX_WIFI_RECONNECT_ATTEMPTS 4     // max # of attempts to reconnect to wifi
-#define EMAIL_SEND_WAIT_TIME_SECONDS 3    // wait time for send status after attempting to send an email
-#define MAX_EMAIL_RESEND_ATTEMPTS 4       // max # of attempts to resend the email
+#define WIFI_CONNECT_WAIT_TIME_SECONDS 5 // wait time for connection status after attempting to connect to wifi
+#define MAX_WIFI_RECONNECT_ATTEMPTS 10     // max # of attempts to reconnect to wifi
+#define EMAIL_SEND_WAIT_TIME_SECONDS 5    // wait time for send status after attempting to send an email
+#define MAX_EMAIL_RESEND_ATTEMPTS 10       // max # of attempts to resend the email
 
 // WiFi Constants
 enum WifiType
@@ -29,14 +29,14 @@ enum WifiType
 #define WIFI_PASSWORD "******"    // wifi password (Only used when HOME_WIFI is selected)
 
 // Only for WPA2 Enterprise Networks
-#define EAP_ANONYMOUS_IDENTITY "anonymous" // (Only used when ENTERPRISE_WIFI is selected)
-#define EAP_IDENTITY "oemmgr"              // ualberta ccid                  // (Only used when ENTERPRISE_WIFI is selected)
-#define EAP_PASSWORD "oempass_ac03"              // ualberta password              // (Only used when ENTERPRISE_WIFI is selected)
+#define EAP_ANONYMOUS_IDENTITY "anonymous"      // (Only used when ENTERPRISE_WIFI is selected)
+#define EAP_IDENTITY "oemmgr"                   // ualberta ccid                  // (Only used when ENTERPRISE_WIFI is selected)
+#define EAP_PASSWORD "oempass_ac03"             // ualberta password              // (Only used when ENTERPRISE_WIFI is selected)
 
 // Email Account Settings
-#define SENDER_GMAIL_ADDRESS "oemmgr@ualberta.ca" // sender's gmail address
-#define SENDER_GMAIL_PASSWORD "oempass_ac03"                 // sender's gmail address
-#define RECEIVER_EMAIL_ADDRESS "oemmgr@ualberta.ca"                // receiver's gmail address
+#define SENDER_GMAIL_ADDRESS "oemmgr@ualberta.ca"           // sender's gmail address
+#define SENDER_GMAIL_PASSWORD "oempass_ac03"                // sender's gmail address
+#define RECEIVER_EMAIL_ADDRESS "oemmgr@ualberta.ca"            // receiver's gmail address
 
 /////////////////////////////////////////////////////////////////
 // Hardware Settings                                           //
@@ -49,17 +49,3 @@ enum WifiType
 // Deep Sleep Settings
 #define DEEP_SLEEP_FOR_X_SECONDS 60
 #define STAY_AWAKE_FOR_X_SECONDS 5
-
-/////////////////////////////////////////////////////////////////
-// Internal Settings                                           //
-/////////////////////////////////////////////////////////////////
-
-// Request Variables
-#define NO_REQUEST 0
-#define SLEEP_REQUEST 1
-#define EMAIL_REQUEST 2
-#define CONFIG_REQUEST 3
-
-// Mode of Operation Variables
-#define REGULAR_MODE 0
-#define BLE_MODE 1

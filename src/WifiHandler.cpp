@@ -24,13 +24,13 @@ void WifiHandler::initConnection()
     // Connection successful
     if (connection_state)
     {
-        Serial.print("Connected to ");
+        Serial.print("\nConnected to ");
         Serial.println(WIFI_SSID);
     }
     // Connection failed
     else
     {
-        Serial.print("Failed to connect to ");
+        Serial.print("\nFailed to connect to ");
         Serial.println(WIFI_SSID);
     }
 }
@@ -50,7 +50,7 @@ void WifiHandler::closeConnection()
 uint8_t WifiHandler::wifiConnect()
 {
     static uint16_t attempt = 0;
-    Serial.print("Connecting to ");
+    Serial.print("\nConnecting to ");
     Serial.println(WIFI_SSID);
 
     WiFi.disconnect(true);
@@ -65,13 +65,13 @@ uint8_t WifiHandler::wifiConnect()
         esp_wpa2_config_t config = WPA2_CONFIG_INIT_DEFAULT(); //set config settings to default
         esp_wifi_sta_wpa2_ent_enable(&config);                 //set config settings to enable function
 
-        Serial.print("Begin WiFi");
+        Serial.println("\nBegin WiFi");
         WiFi.begin(WIFI_SSID); //connect to wifi
     }
     // connect to non-enterprise wifi
     else
     {
-        Serial.print("Begin WiFi");
+        Serial.print("\nBegin WiFi");
         WiFi.begin(WIFI_SSID, WIFI_PASSWORD); //connect to wifi
     }
 
@@ -86,7 +86,22 @@ uint8_t WifiHandler::wifiConnect()
         if (counter >= connect_wait_time)
         {
             //ESP.restart();
-            Serial.println("");
+            Serial.print("\nwl_status_t error code: ");
+            switch (WiFi.status())
+            {
+                case WL_IDLE_STATUS:
+                    Serial.println("WL_IDLE_STATUS");
+                case WL_NO_SSID_AVAIL:
+                    Serial.println("NWL_NO_SSID_AVAIL");
+                case WL_SCAN_COMPLETED:
+                    Serial.println("WL_SCAN_COMPLETED");
+                case WL_CONNECT_FAILED:
+                    Serial.println("WL_CONNECT_FAILED");
+                case WL_CONNECTION_LOST:
+                    Serial.println("WL_CONNECTION_LOST");
+                case WL_DISCONNECTED:
+                    Serial.println("WL_DISCONNECTED");
+            }
             return false;
         }
     }
@@ -94,7 +109,7 @@ uint8_t WifiHandler::wifiConnect()
     local_ip_address = WiFi.localIP().toString();
     Serial.println("");
     Serial.println("Connection: ESTABLISHED");
-    Serial.print("Got IP address: ");
+    Serial.println("Got IP address: ");
     Serial.println(local_ip_address);
     return true;
 }
